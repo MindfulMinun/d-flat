@@ -1,0 +1,72 @@
+<!doctype html>
+<!--
+    Made with love by MindfulMinun
+    https://benjic.xyz
+-->
+<html lang="en-US" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title>D♭</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width">
+        <meta name="theme-color" content="#448aff">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+        <style media="screen">
+            *, *::before, *::after { box-sizing: border-box; }
+            html, body {
+                font-family: "Roboto", Helvetica, Arial, sans-serif;
+                height: 100%;
+                margin: 0;
+                background-color: #1e1e1e;
+                color: white;
+            }
+            body { display: flex; }
+            a[href] { color: var(--accent); }
+
+            input, audio {
+                display: block;
+                margin: 1em 0;
+            }
+
+            .container {
+                width: 840px;
+                max-width: 100%;
+                margin: 0 auto;
+                padding: 1em;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <p>
+                Drop a file anywhere or <button id="choose">choose one from your filesystem.</button>
+            </p>
+            <select id="" disabled>
+                <option value="derivative-processor">derivative-processor</option>
+                <option value="integral-processor">integral-processor</option>
+                <option value="subtract-overlap" selected>subtract-overlap</option>
+            </select>
+            <audio controls></audio>
+
+
+            <ul>
+                <li>
+                    <code>derivative-processor</code>
+                    <p>Approximates the first derivative of the audio as a function respect to time.</p>
+                </li>
+                <li>
+                    <code>integral-processor</code>
+                    <p>Approximates the first integral of the audio as a function respect to time. Plus C of zero.</p>
+                </li>
+                <li>
+                    <code>subtract-overlap</code>
+                    <p>Inverts the amplitude of every even-numbered channel and merges all channels to mono. This effectively cancels the sounds the left and right channels share in common. Quick-and-dirty way of removing vocals.</p>
+                </li>
+            </ul>
+
+        </div>
+        <input id="file" type="file" hidden>
+
+        <script src="./dist/main.js"></script>
+    </body>
+</html>

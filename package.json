@@ -1,0 +1,29 @@
+{
+  "name": "d-flat",
+  "version": "0.1.0",
+  "description": "What does the derivative of a song sound like?",
+  "main": "dist/main.js",
+  "author": "MindfulMinun <importantmails4bc@gmail.com> (https://benjic.xyz)",
+  "contributors": [],
+  "homepage": "https://github.com/MindfulMinun/dy-dx-d-flat",
+  "repository": "github:MindfulMinun/dy-dx-d-flat",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "build": "rm -rf dist && npx webpack --config webpack.config.js --mode=production",
+    "watch": "npm run serve & npx webpack --config webpack.config.js --mode=development --watch",
+    "serve": "npx http-server . -p 3000",
+    "start": "npm run serve",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "engines": {
+    "node": ">=8.0.0 <11.0.0"
+  },
+  "devDependencies": {
+    "http-server": "^0.12.3",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.11",
+    "worklet-loader": "^1.0.0"
+  },
+  "dependencies": {}
+}
