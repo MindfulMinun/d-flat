@@ -2,6 +2,49 @@
 
 const carry = Symbol()
 
+class NoopProcessor extends AudioWorkletProcessor {
+    /**
+     * @param {Float32Array[][]} inputs
+     * @param {Float32Array[][]} outputs
+     */
+    process(inputs, outputs) {
+        const input = inputs[0]
+        const output = outputs[0]
+
+        for (let channel = 0; channel < input.length; channel++) {
+            output[channel].set(input[channel])
+        }
+        return true
+    }
+}
+registerProcessor('noop', NoopProcessor)
+
+class Mono extends AudioWorkletProcessor {
+    /**
+     * @param {Float32Array[][]} inputs
+     * @param {Float32Array[][]} outputs
+     */
+    process(inputs, outputs) {
+        // This processor has only one input and one output.
+        const input = inputs[0]
+        const output = outputs[0]
+
+        for (let channel = 0; channel < input.length; channel++) {
+            for (let sample = 0; sample < input[0].length; sample++) {
+                // Mono: (L + R) / 2
+                // More generally: 1/n * (\sum_{i = 0}^n C_i)
+                output[0][sample] += input[channel][sample] * (1 / input.length)
+            }
+            if (channel !== 0) {
+                output[channel].set(output[0])
+            }
+        }
+
+        return true
+    }
+}
+registerProcessor('mono', Mono)
+
 class DerivativeProcessor extends AudioWorkletProcessor {
     constructor(options) {
         super()
@@ -25,12 +68,10 @@ class DerivativeProcessor extends AudioWorkletProcessor {
             this[carry][channel] = input[channel][input.length - 1]
         }
 
-        return true;
+        return true
     }
 }
-  
-registerProcessor('derivative-processor', DerivativeProcessor)
-
+registerProcessor('derivative', DerivativeProcessor)
 
 class IntegralProcessor extends AudioWorkletProcessor {
 
@@ -56,33 +97,34 @@ class IntegralProcessor extends AudioWorkletProcessor {
             this[carry][channel] = input[channel][input.length - 1]
         }
 
-        return true;
+        return true
     }
 }
-  
-registerProcessor('integral-processor', IntegralProcessor)
+registerProcessor('integral', IntegralProcessor)
 
 
-// class BitCrusher extends AudioWorkletProcessor {
-//     /**
-//      * @param {Float32Array[][]} inputs
-//      * @param {Float32Array[][]} outputs
-//      */
-//     process(inputs, outputs) {
-//         const input = inputs[0]
-//         const output = outputs[0]
+class BitCrusher extends AudioWorkletProcessor {
+    /**
+     * @param {Float32Array[][]} inputs
+     * @param {Float32Array[][]} outputs
+     */
+    process(inputs, outputs) {
+        const input = inputs[0]
+        const output = outputs[0]
 
-//         for (let channel = 0; channel < input.length; channel++) {
-//             for (let sample = 0; sample < input[channel].length; sample++) {
-//                 output[channel][sample] = input[channel][sample] ** 2
-//             }
-//         }
+        let phase = 1
+        const step = 2 * Math.pow(.5, 8)
 
-//         return true;
-//     }
-// }
-  
-// registerProcessor('bit-crusher', BitCrusher)
+        for (let channel = 0; channel < input.length; channel++) {
+            for (let sample = 0; sample < input[channel].length; sample++) {
+                output[channel][sample] = input[channel][sample]
+            }
+        }
+
+        return true
+    }
+}
+registerProcessor('bit-crusher', BitCrusher)
 
 
 /**
@@ -95,11 +137,12 @@ class SubtractOverlap extends AudioWorkletProcessor {
      * @param {Float32Array[][]} outputs
      */
     process(inputs, outputs) {
+        // This processor has only one input and one output.
         const input = inputs[0]
         const output = outputs[0]
 
         for (let channel = 0; channel < input.length; channel++) {
-            for (let sample = 0; sample < input[0].length; sample++) {
+            for (let sample = 0; sample < input[channel].length; sample++) {
                 output[0][sample] += (channel % 2 === 0 ? 1 : -1) * input[channel][sample]
             }
             if (channel !== 0) {
@@ -107,8 +150,41 @@ class SubtractOverlap extends AudioWorkletProcessor {
             }
         }
 
-        return true;
+        return true
     }
 }
-  
 registerProcessor('subtract-overlap', SubtractOverlap)
+
+/**
+ * Like `subtract-overlap`, but isolates the overlap instead of removing it.
+ * Quick-and-dirty way to isolate vocals
+ */
+class IsolateOverlap extends AudioWorkletProcessor {
+    /**
+     * @param {Float32Array[][]} inputs
+     * @param {Float32Array[][]} outputs
+     */
+    process(inputs, outputs) {
+        // This processor has only one input and one output.
+        const input = inputs[0]
+        const output = outputs[0]
+
+        // FIXME: I can't get this filter to work :/
+
+        for (let channel = 0; channel < input.length; channel++) {
+            for (let sample = 0; sample < input[channel].length; sample++) {
+                output[0][sample] += (channel % 2 === 0 ? 1 : -1) * input[channel][sample]
+            }
+        }
+
+        for (let channel = input.length - 1; 0 <= channel; channel--) {
+            for (let sample = 0; sample < input[channel].length; sample++) {
+                output[channel][sample] = input[channel][sample] - output[0][sample]
+            }
+        }
+
+
+        return true
+    }
+}
+registerProcessor('isolate-overlap', IsolateOverlap)
