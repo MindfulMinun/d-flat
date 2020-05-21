@@ -19,7 +19,7 @@
             }
             html, body {
                 font-family: "Roboto", Helvetica, Arial, sans-serif;
-                line-height; 1.15;
+                line-height: 1.15;
                 height: 100%;
                 margin: 0;
                 background-color: #1e1e1e;
@@ -67,6 +67,8 @@
                 padding: .5em 1.5em .5em .5em; 
                 min-width: 120px;
             }
+            option { color: initial; }
+            option[disabled] { color: rgb(0 0 0 / .3); }
             button:focus,
             select:focus {
                 border-color: #448aff;
@@ -77,6 +79,12 @@
                 max-width: 100%;
                 margin: 0 auto;
                 padding: 1em;
+            }
+            .credits {
+                text-align: center;
+                font-style: italic;
+                margin: 3rem auto;
+                opacity: .5;
             }
         </style>
 
@@ -142,11 +150,17 @@
                 <li>
                     <code>mono</code>
                     <p>
-                        Converts the audio to mono by taking the arithmetic average of the samples.
+                        Converts the audio to mono by taking the arithmetic average of the samples of each channel.
                     </p>
                 </li>
             </ul>
 
+            <p class="credits">
+                Made with :3c by <a href="https://benjic.xyz">MindfulMinun</a>
+                •
+                <a href="https://github.com/MindfulMinun/d-flat">Source code</a>
+            </p>
+          
         </div>
         <input id="file" type="file" hidden>
 
