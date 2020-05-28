@@ -1,22 +1,16 @@
 //@ts-ignore
-import workletUrl from './processors.worklet.js'
+import processorUrl from './processors.worklet.js'
+import visFactory from './visualizer.js'
 
 const audioEl = document.querySelector('audio')
 const audio = new AudioContext()
+const visualizer = visFactory(audio, audioEl)
 const audioSrcNode = audio.createMediaElementSource(audioEl)
 
+let dFlat;
+
 // Add the modules
-audio.audioWorklet.addModule('/dist/' + workletUrl)
-
-let dFlat = null
-// let dFlat = null new AudioWorkletNode(audio, 'subtract-overlap', {
-//     processorOptions: {
-//         maxChannels: audio.destination.maxChannelCount
-//     }
-// })
-
-// audioSrcNode.connect(dFlat)
-// dFlat.connect(audio.destination)
+audio.audioWorklet.addModule('/dist/' + processorUrl)
 
 /**
  * Swaps out the processor
@@ -26,6 +20,7 @@ export function useProcessor(name) {
     if (dFlat) {
         dFlat.disconnect()
         audioSrcNode.disconnect()
+        visualizer.disconnect()
     }
 
     dFlat = new AudioWorkletNode(audio, name, {
@@ -34,24 +29,8 @@ export function useProcessor(name) {
         }
     })
     audioSrcNode.connect(dFlat)
-    dFlat.connect(audio.destination)
+    dFlat.connect(visualizer)
+    visualizer.connect(audio.destination)
 }
 
 export { audio }
-
-
-// const audioEl = document.querySelector('audio')
-// const audio = new AudioContext()
-// await audio.audioWorklet.addModule('/dist/' + workletUrl)
-
-// const dFlat = new AudioWorkletNode(audio, 'subtract-overlap', {
-// // const dFlat = new AudioWorkletNode(audio, 'bit-crusher', {
-//     processorOptions: {
-//         maxChannels: audio.destination.maxChannelCount
-//     }
-// })
-// const audioSrcNode = audio.createMediaElementSource(audioEl)
-
-// audioSrcNode.connect(dFlat)
-// dFlat.connect(audio.destination)
-// audioEl.src = URL.createObjectURL(audioFile)

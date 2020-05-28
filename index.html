@@ -22,7 +22,6 @@
                 line-height: 1.15;
                 height: 100%;
                 margin: 0;
-                background-color: #1e1e1e;
                 color: white;
             }
             body { display: flex; }
@@ -74,11 +73,20 @@
                 border-color: #448aff;
             }
 
+            canvas {
+                position: fixed;
+                top: 0; left: 0; bottom: 0; right: 0;
+                width: 100%;
+                height: 100%;
+                background-color: #000;
+            }
+
             .container {
                 width: 840px;
                 max-width: 100%;
                 margin: 0 auto;
                 padding: 1em;
+                z-index: 1;
             }
             .credits {
                 text-align: center;
@@ -102,6 +110,7 @@
             });"></script> -->
     </head>
     <body>
+        <canvas></canvas>
         <div class="container">
             <p>
                 Drag and drop an audio file anywhere or <button id="choose">choose one from your filesystem.</button>
@@ -116,6 +125,13 @@
                     <option value="subtract-overlap">subtract-overlap</option>
                     <option value="isolate-overlap" disabled>isolate-overlap</option>
                     <option value="mono">mono</option>
+                </select>
+            </label>
+            <label>
+                Visualizer:
+                <select id="visualizerSelect">
+                    <option value="0" selected>Oscilloscope</option>
+                    <option value="1">Linear spectrogram</option>
                 </select>
             </label>
             </p>
