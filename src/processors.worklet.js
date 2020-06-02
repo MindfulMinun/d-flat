@@ -102,8 +102,10 @@ class IntegralProcessor extends AudioWorkletProcessor {
 }
 registerProcessor('integral', IntegralProcessor)
 
-
-class BitCrusher extends AudioWorkletProcessor {
+/**
+ * Sample-rate reduction
+ */
+class BitCrusher_Sr8 extends AudioWorkletProcessor {
     /**
      * @param {Float32Array[][]} inputs
      * @param {Float32Array[][]} outputs
@@ -112,20 +114,87 @@ class BitCrusher extends AudioWorkletProcessor {
         const input = inputs[0]
         const output = outputs[0]
 
-        let phase = 1
-        const step = 2 * Math.pow(.5, 8)
+        const chunkSize = 1 << 3
 
         for (let channel = 0; channel < input.length; channel++) {
-            for (let sample = 0; sample < input[channel].length; sample++) {
-                output[channel][sample] = input[channel][sample]
+            for (let sample = 0; sample < input[channel].length; sample += chunkSize) {
+                // Take the average of a few samples
+                let sum = 0
+                for (let i = 0; i < chunkSize; i++) {
+                    sum += input[channel][sample + i]
+                }
+                const avg = sum / chunkSize
+
+                // Set the output to the average, effectively reducing the sampling rate
+                for (let i = 0; i < chunkSize; i++) {
+                    output[channel][sample + i] = avg
+                }
             }
         }
 
         return true
     }
 }
-registerProcessor('bit-crusher', BitCrusher)
+registerProcessor('bit-crusher-sr8', BitCrusher_Sr8)
 
+/**
+ * Resolution reduction
+ */
+class BitCrusher_Res extends AudioWorkletProcessor {
+    /**
+     * @param {Float32Array[][]} inputs
+     * @param {Float32Array[][]} outputs
+     */
+    process(inputs, outputs) {
+        const input = inputs[0]
+        const output = outputs[0]
+
+        const res = 16
+
+        // Resolution reduction
+        for (let channel = 0; channel < input.length; channel++) {
+            for (let sample = 0; sample < input[channel].length; sample++) {
+                output[channel][sample] = Math.round(input[channel][sample] * res) / res
+            }
+        }
+
+        return true
+    }
+}
+registerProcessor('bit-crusher-res', BitCrusher_Res)
+
+class BitCrusher_Both extends AudioWorkletProcessor {
+    /**
+     * @param {Float32Array[][]} inputs
+     * @param {Float32Array[][]} outputs
+     */
+    process(inputs, outputs) {
+        const input = inputs[0]
+        const output = outputs[0]
+
+        const chunkSize = 1 << 3
+        const res = 16
+
+        for (let channel = 0; channel < input.length; channel++) {
+            for (let sample = 0; sample < input[channel].length; sample += chunkSize) {
+                // Take the average of a few samples
+                let sum = 0
+                for (let i = 0; i < chunkSize; i++) {
+                    sum += Math.round(input[channel][sample] * res) / res
+                }
+                const avg = sum / chunkSize
+
+                // Set the output to the average, effectively reducing the sampling rate
+                for (let i = 0; i < chunkSize; i++) {
+                    output[channel][sample + i] = avg
+                }
+            }
+        }
+
+        return true
+    }
+}
+registerProcessor('bit-crusher-both', BitCrusher_Both)
 
 /**
  * Inverts the amplitude of every even-numbered channel and merges them to mono.

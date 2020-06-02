@@ -23,6 +23,7 @@
                 height: 100%;
                 margin: 0;
                 color: white;
+                background-color: black;
             }
             body { display: flex; }
             a[href] { color: var(--accent); }
@@ -73,6 +74,10 @@
                 border-color: #448aff;
             }
 
+            button, select {
+                backdrop-filter: blur(2px);
+            }
+
             canvas {
                 position: fixed;
                 top: 0; left: 0; bottom: 0; right: 0;
@@ -87,6 +92,12 @@
                 margin: 0 auto;
                 padding: 1em;
                 z-index: 1;
+            }
+            .spacer {
+                /* height: 90vh; */
+                height: 1000px;
+                height: 90vh;
+                height: calc(100vh - 6rem);
             }
             .credits {
                 text-align: center;
@@ -124,6 +135,9 @@
                     <option value="integral">integral</option>
                     <option value="subtract-overlap">subtract-overlap</option>
                     <option value="isolate-overlap" disabled>isolate-overlap</option>
+                    <option value="bit-crusher-sr8">bit-crusher-sr8 (Sample-rate reduction)</option>
+                    <option value="bit-crusher-res">bit-crusher-res (bit-depth reduction)</option>
+                    <option value="bit-crusher-both">bit-crusher-both</option>
                     <option value="mono">mono</option>
                 </select>
             </label>
@@ -163,6 +177,20 @@
                     <code>isolate-overlap</code>
                     <p>The opposite of subtract-overlap. You think it'd be simple but I can't get it to work :/</p>
                 </li>
+                <!-- bit-crusher-sr8
+                bit-crusher-res -->
+                <li>
+                    <code>bit-crusher-sr8</code>
+                    <p>Bitcrusher. Works by taking the average of 8 samples of the input and setting that average as the output for those 8 samples, effectively <strong>reducing the sampling rate</strong>.</p>
+                </li>
+                <li>
+                    <code>bit-crusher-res</code>
+                    <p>Bitcrusher. Works by  <strong>reducing the resolution of each sample</strong> from a 32-bit float to a 8-bit float.</p>
+                </li>
+                <li>
+                    <code>bit-crusher-both</code>
+                    <p>Bitcrusher. Combines the output of bit-crusher-sr8 and bit-crusher-res.</p>
+                </li>
                 <li>
                     <code>mono</code>
                     <p>
@@ -176,6 +204,8 @@
                 •
                 <a href="https://github.com/MindfulMinun/d-flat">Source code</a>
             </p>
+
+            <div class="spacer"></div>
           
         </div>
         <input id="file" type="file" hidden>
