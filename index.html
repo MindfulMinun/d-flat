@@ -93,6 +93,10 @@
                 padding: 1em;
                 z-index: 1;
             }
+            .warn {
+                border: 2px solid red;
+                padding: 0 1em;
+            }
             .spacer {
                 /* height: 90vh; */
                 height: 1000px;
@@ -123,6 +127,13 @@
     <body>
         <canvas></canvas>
         <div class="container">
+            <div class="warn">
+                <p>
+                    There’s currently a bug in Chrome that causes the <code>subtract-overlap</code> filter to glitch and scream.
+                    Refrain from using it, it’ll hurt your years X(
+                </p>
+                <p>(This glitch doesn’t occur in Firefox, so maybe try that instead :) )</p>
+            </div>
             <p>
                 Drag and drop an audio file anywhere or <button id="choose">choose one from your filesystem.</button>
             </p>
@@ -139,6 +150,7 @@
                     <option value="bit-crusher-res">bit-crusher-res (bit-depth reduction)</option>
                     <option value="bit-crusher-both">bit-crusher-both</option>
                     <option value="mono">mono</option>
+                    <option value="zeroes">zeroes</option>
                 </select>
             </label>
             <label>
@@ -196,6 +208,10 @@
                     <p>
                         Converts the audio to mono by taking the arithmetic average of the samples of each channel.
                     </p>
+                </li>
+                <li>
+                    <code>zeroes</code>
+                    <p>Outputs no sound.</p>
                 </li>
             </ul>
 
