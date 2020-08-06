@@ -1,7 +1,5 @@
 /// <reference path="./types.d.ts" />
 
-const carry = Symbol()
-
 class NoopProcessor extends AudioWorkletProcessor {
     /**
      * @param {Float32Array[][]} inputs
@@ -47,11 +45,6 @@ class Mono extends AudioWorkletProcessor {
 registerProcessor('mono', Mono)
 
 class DerivativeProcessor extends AudioWorkletProcessor {
-    constructor(options) {
-        super()
-        this[carry] = new Float32Array(options.processorOptions.maxChannels)
-    }
-    
     /**
      * @param {Float32Array[][]} inputs
      * @param {Float32Array[][]} outputs
@@ -75,12 +68,6 @@ class DerivativeProcessor extends AudioWorkletProcessor {
 registerProcessor('derivative', DerivativeProcessor)
 
 class IntegralProcessor extends AudioWorkletProcessor {
-
-    constructor(options) {
-        super()
-        this[carry] = new Float32Array(options.processorOptions.maxChannels)
-    }
-  
     /**
      * @param {Float32Array[][]} inputs
      * @param {Float32Array[][]} outputs
